@@ -17,7 +17,9 @@ export default withAuth(
         email: "",
         password: "",
         sessionToken: null,
-        errors: []
+        errors: [],
+        currentUsername: "",
+        currentScreen: ""
       };
       this.oktaAuth = new OktaAuth({ url: config.url });
       this.checkAuthentication();
@@ -39,7 +41,6 @@ export default withAuth(
     };
 
     handleSubmit = e => {
-
       e.preventDefault();
       const newState = { ...this.state };
       fetch("http://localhost:4000/api/newUser", {
@@ -52,23 +53,45 @@ export default withAuth(
       })
         .then(blob => blob.json())
         .then(res => {
-
           if (res.status === 400) {
             this.setState({ errors: res.errorCauses });
           }
 
-          this.oktaAuth.signIn({
-            username: this.state.email,
-            password: this.state.password
-          })
-          .then(res => {
-            this.setState({
-              sessionToken: res.sessionToken
+          // create new chakit user
+          this.createNewChatkitUser(this.state.email);
+
+          this.oktaAuth
+            .signIn({
+              username: this.state.email,
+              password: this.state.password
+            })
+            .then(res => {
+              this.setState({
+                sessionToken: res.sessionToken
+              });
             });
-          })
         })
         .catch(err => console.log({ err }));
+    };
 
+    createNewChatkitUser = username => {
+      fetch("http://localhost:4000/api/newChatkitUser", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({ username })
+      })
+        .then(response => {
+          this.setState({
+            currentUsername: username,
+            currentScreen: "chatScreen"
+          });
+          console.log({ response });
+        })
+        .catch(error => {
+          console.log({ error });
+        });
     };
 
     render() {
