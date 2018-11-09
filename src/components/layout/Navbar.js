@@ -35,7 +35,7 @@ export default withAuth(class Navbar extends Component {
       </div>
     ) : (
         <div className="btn-group">
-          <Link to="/register" className="btn btn-default">Register</Link>
+          <Link to="/register" className="btn btn-danger">Register</Link>
           <a
             className="btn btn-primary"
             href="javascript:void(0)"
