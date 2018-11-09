@@ -16,7 +16,8 @@ export default withAuth(
         displayName: "",
         email: "",
         password: "",
-        sessionToken: null
+        sessionToken: null,
+        errors: []
       };
       this.oktaAuth = new OktaAuth({ url: config.url });
       this.checkAuthentication();
@@ -38,6 +39,7 @@ export default withAuth(
     };
 
     handleSubmit = e => {
+
       e.preventDefault();
       const newState = { ...this.state };
       fetch("http://localhost:4000/api/newUser", {
@@ -47,9 +49,15 @@ export default withAuth(
           "Content-Type": "application/json"
         },
         body: JSON.stringify(newState)
-      }).then(user => {
-        this.oktaAuth
-          .signIn({
+      })
+        .then(blob => blob.json())
+        .then(res => {
+
+          if (res.status === 400) {
+            this.setState({ errors: res.errorCauses });
+          }
+
+          this.oktaAuth.signIn({
             username: this.state.email,
             password: this.state.password
           })
@@ -57,8 +65,10 @@ export default withAuth(
             this.setState({
               sessionToken: res.sessionToken
             });
-          });
-      });
+          })
+        })
+        .catch(err => console.log({ err }));
+
     };
 
     render() {
@@ -70,6 +80,15 @@ export default withAuth(
         <div className="row my-5">
           <div className="col-xs-12 col sm-10 col-md-8 col-lg-6 mx-auto">
             <div className="card card-body mx-3">
+              {this.state.errors.length !== 0 ? (
+                <div className="alert alert-danger">
+                  <ul>
+                    {this.state.errors.map((err, i) => (
+                      <li key={i}>{err.errorSummary}</li>
+                    ))}
+                  </ul>
+                </div>
+              ) : null}
               <form onSubmit={this.handleSubmit}>
                 <div className="form-group">
                   <label htmlFor="firstName">First Name</label>
