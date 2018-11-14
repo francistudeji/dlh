@@ -3,14 +3,14 @@ const router = express.Router();
 const chatkit = require('../../lib/chatKitClient')
 
 router.post("/", (req, res) => {
-  const { username } = req.body;
+  const { id, username } = req.body;
   chatkit
     .createUser({
-      id: username,
+      id,
       name: username
     })
     .then(() => {
-      res.sendStatus(200);
+      res.status(201).json({ msg: "[chatkit] User Created" });
     })
     .catch(error => {
       if (error.error_type === "services/chatkit/user_already_exists") {

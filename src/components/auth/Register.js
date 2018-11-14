@@ -58,7 +58,7 @@ export default withAuth(
           }
 
           // create new chakit user
-          this.createNewChatkitUser(this.state.email);
+          this.createNewChatkitUser(this.state.displayName, this.state.email);
 
           this.oktaAuth
             .signIn({
@@ -74,17 +74,17 @@ export default withAuth(
         .catch(err => console.log({ err }));
     };
 
-    createNewChatkitUser = username => {
+    createNewChatkitUser = (displayName, email) => {
       fetch("http://localhost:4000/api/newChatkitUser", {
         method: "POST",
         headers: {
           "Content-Type": "application/json"
         },
-        body: JSON.stringify({ username })
+        body: JSON.stringify({ id: displayName, username: email })
       })
         .then(response => {
           this.setState({
-            currentUsername: username,
+            currentUsername: this.state.email,
             currentScreen: "chatScreen"
           });
           console.log({ response });

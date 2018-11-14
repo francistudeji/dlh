@@ -2,7 +2,6 @@ import React, { Component } from "react";
 import Navbar from "../layout/Navbar";
 import { withAuth } from "@okta/okta-react";
 import Chatkit from "@pusher/chatkit";
-import messageList from "../message/MessageList";
 import MessageList from "../message/MessageList";
 
 export default withAuth(
@@ -12,66 +11,34 @@ export default withAuth(
       this.state = {
         currentUserName: "",
         currentUserEmail: "",
-
         currentUser: {},
         currentRoom: {},
         messages: [],
-        text: ""
+        text: "",
+        attachment: null
       };
     }
 
     sendMessage = text => {
       this.state.currentUser.sendMessage({
         text,
-        roomId: this.state.currentRoom.id
+        roomId: this.state.currentRoom.id,
       });
     };
 
-    initChatkitInstance = async () => {
-      let token = JSON.parse(localStorage.getItem("okta-token-storage"));
-      //console.log(token.idToken.claims)
+    // initChatkitInstance = async () => {
+    //   let token = JSON.parse(localStorage.getItem("okta-token-storage"));
+    //   //console.log(token.idToken.claims)
 
-      const chatManager = new Chatkit.ChatManager({
-        instanceLocator: "v1:us1:3b00ed07-103c-4828-8fd7-271bb696c15d",
-        userId: this.state.currentUserEmail,
-        tokenProvider: new Chatkit.TokenProvider({
-          url: "http://localhost:4000/api/chatkitAuthenticate"
-        })
-      });
+    //   const chatManager = new Chatkit.ChatManager({
+    //     instanceLocator: "v1:us1:3b00ed07-103c-4828-8fd7-271bb696c15d",
+    //     userId: this.state.currentUserEmail,
+    //     tokenProvider: new Chatkit.TokenProvider({
+    //       url: "http://localhost:4000/api/chatkitAuthenticate"
+    //     })
+    //   });
 
-      // chatManager.connect()
-      //   .then(cu => {
-      //     if(cu) console.log(cu)
-      //     console.log('no cu')
-      //   })
-      //   .catch(error => {
-      //     console.log({ error });
-      //   });
-
-      // chatManager
-      //   .connect()
-      //   .then(currentUser => {
-      //     console.log(currentUser)
-      //     this.setState({ currentUser });
-      //     return currentUser.subscribeToRoom({
-      //       roomId: 19420332,
-      //       messageLimit: 100,
-      //       hooks: {
-      //         onNewMessage: message => {
-      //           this.setState({ messages: [...this.state.messages, message] });
-      //           console.log(message);
-      //         }
-      //       }
-      //     });
-      //   })
-      //   .then(currentRoom => {
-      //     this.setState({ currentRoom });
-      //     console.log(this.state);
-      //   })
-      //   .catch(error => {
-      //     console.log({ error });
-      //   });
-    };
+    // };
 
     componentDidMount() {
       const idToken = JSON.parse(localStorage.getItem("okta-token-storage"));
@@ -83,7 +50,7 @@ export default withAuth(
         () => {
           const chatManager = new Chatkit.ChatManager({
             instanceLocator: "v1:us1:3b00ed07-103c-4828-8fd7-271bb696c15d",
-            userId: this.state.currentUserEmail,
+            userId: this.state.currentUserName,
             tokenProvider: new Chatkit.TokenProvider({
               url: "http://localhost:4000/api/chatkitAuthenticate"
             })
@@ -100,7 +67,7 @@ export default withAuth(
                 hooks: {
                   onNewMessage: message => {
                     this.setState({
-                      messages: [...this.state.messages, message]
+                      messages: [message, ...this.state.messages]
                     });
                     console.log(message);
                   }
@@ -124,13 +91,32 @@ export default withAuth(
       });
     };
 
+    onFileChanged = e => {
+      const attachment = e.target.files[0]
+      this.setState({attachment})
+    }
+
     onSubmit = e => {
       e.preventDefault();
-      this.state.currentUser.sendMessage({
-        text: this.state.text,
-        roomId: this.state.currentRoom.id
-      });
-      this.setState({ text: "" });
+      if(this.state.attachment === null) {
+        this.state.currentUser.sendMessage({
+          text: this.state.text,
+          roomId: this.state.currentRoom.id
+        });
+        this.setState({ text: "" });
+      } else {
+        this.state.currentUser.sendMessage({
+          text: this.state.text,
+          attachment: {
+            file: this.state.attachment,
+            name: new Date().toDateString()
+          },
+          roomId: this.state.currentRoom.id
+        });
+        this.setState({ text: "", attachment: null });
+      }
+
+
     };
 
     logout = async () => {
@@ -162,6 +148,12 @@ export default withAuth(
                       onChange={this.onChange}
                       placeholder="Type to send message"
                       name="text"
+                    />
+                    <input
+                      type="file"
+                      id="file"
+                      className="form-control"
+                      onChange={this.onFileChanged}
                     />
                     <input
                       type="submit"

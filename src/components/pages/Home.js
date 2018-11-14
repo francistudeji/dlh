@@ -38,21 +38,6 @@ export default withAuth(
     render() {
       if (this.state.authenticated === null) return null;
 
-      const content = this.state.authenticated ? (
-        <div>
-          <p className="lead">You are logged in </p>
-          <button className="btn btn-default" onClick={this.logout}>
-            Logout
-          </button>
-        </div>
-      ) : (
-        <div>
-          <p className="lead">You are not logged in </p>
-          <button className="btn btn-default" onClick={this.login}>
-            Login
-          </button>
-        </div>
-      );
       return (
         <div>
           <Navbar />
