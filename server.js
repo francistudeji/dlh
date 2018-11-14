@@ -1,6 +1,7 @@
 const express = require("express");
 const bodyParser = require("body-parser");
 const cors = require("cors");
+const part = require('path')
 const mongoose = require("mongoose");
 const newUserRoute = require("./src/api/routes/DLHUser");
 const newChatKitUserRoute = require("./src/api/routes/ChatkitUser");
@@ -21,6 +22,10 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use("/api/newUser", newUserRoute);
 app.use("/api/newChatkitUser", newChatKitUserRoute);
 app.use("/api/chatkitAuthenticate", ChatKitAuthenticateRoute);
+
+app.get('*', (req, res, next) => {
+  res.sendFile(path.join(__dirname, 'build', 'index.html'))
+})
 
 // run node server and listen on port 3001
 app.listen(PORT, err => {
