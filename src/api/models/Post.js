@@ -4,21 +4,21 @@ const timestamp = require("mongoose-timestamp");
 const PostSchema = new mongoose.Schema({
   title: {
     type: String,
-    required: true,
+    required: true
   },
   author: {
     type: String,
-    required: true,
+    required: true
   },
-  body: {
+  description: {
+    type: String,
+    required: true
+  },
+  content: {
     type: String,
     required: true
   },
   slug: {
-    type: String,
-    required: true
-  },
-  image: {
     type: String,
     required: true
   }
@@ -26,5 +26,5 @@ const PostSchema = new mongoose.Schema({
 
 PostSchema.plugin(timestamp);
 
-const Post = mongoose.model("Post", PostSchema);
+const Post = mongoose.model('Post', PostSchema);
 module.exports = Post;

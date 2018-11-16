@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import Navbar from "../layout/Navbar";
+import Layout from "../layout/Layout";
 import { withAuth } from "@okta/okta-react";
 import Chatkit from "@pusher/chatkit";
 import MessageList from "../message/MessageList";
@@ -25,20 +25,6 @@ export default withAuth(
         roomId: this.state.currentRoom.id,
       });
     };
-
-    // initChatkitInstance = async () => {
-    //   let token = JSON.parse(localStorage.getItem("okta-token-storage"));
-    //   //console.log(token.idToken.claims)
-
-    //   const chatManager = new Chatkit.ChatManager({
-    //     instanceLocator: "v1:us1:3b00ed07-103c-4828-8fd7-271bb696c15d",
-    //     userId: this.state.currentUserEmail,
-    //     tokenProvider: new Chatkit.TokenProvider({
-    //       url: "http://localhost:4000/api/chatkitAuthenticate"
-    //     })
-    //   });
-
-    // };
 
     componentDidMount() {
       const idToken = JSON.parse(localStorage.getItem("okta-token-storage"));
@@ -166,8 +152,8 @@ export default withAuth(
             </div>
           </div>
 
-          <Navbar />
-          <div className="container">
+
+          <Layout>
             {/* <h1>Hi, {this.state.currentUserName}</h1>
             <h3>Your email is: {this.state.currentUserEmail}</h3>
             <button className="btn btn-default" onClick={this.logout}>
@@ -179,7 +165,8 @@ export default withAuth(
                 <MessageList messages={this.state.messages} />
               </div>
             </div>
-          </div>
+
+
 
           <nav
             className="navbar navbar-light fixed-bottom pb-3"
@@ -198,6 +185,7 @@ export default withAuth(
               </button>
             </div>
           </nav>
+          </Layout>
         </div>
       );
     }

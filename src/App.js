@@ -9,7 +9,8 @@ import Login from "./components/auth/Login";
 import Register from "./components/auth/Register";
 import Profile from "./components/auth/Profile";
 
-import "./App.css";
+import AdminLogin from "./components/pages/AdminLogin";
+import AdminHome from "./components/pages/AdminHome";
 
 import { Security, SecureRoute, ImplicitCallback } from "@okta/okta-react";
 
@@ -42,6 +43,8 @@ class App extends Component {
               <Route path="/register" component={Register} />
               <Route path="/translate" component={Translate} />
               <SecureRoute path="/profile" component={Profile} />
+              <Route path="/admin/login" component={AdminLogin} />
+              <Route path="/admin/home" component={AdminHome} />
             </Switch>
           </React.Fragment>
         </Security>

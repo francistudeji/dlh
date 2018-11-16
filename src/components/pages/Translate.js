@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 import axios from "axios";
-import Navbar from '../layout/Navbar'
+import Layout from "../layout/Layout";
 
 class Translate extends Component {
   state = {
@@ -98,110 +98,110 @@ class Translate extends Component {
   render() {
     const styles = {
       fontSize: {
-        "fontSize": "30px"
+        fontSize: "30px"
       }
-    }
+    };
     const { english, ibibio, isloading, error } = this.state;
     return (
-      <div>
-        <Navbar />
-      <div className="translate mt-5 container">
-        <div className="row">
-          <div className="col-6">
-            <h3>Translate</h3>
-          </div>
-          <div className="col-6 text-right float-right">
-            {isloading === true ? (
-              <div>
-                {/* <Spinner
+      <Layout>
+
+
+          <div className="row">
+            <div className="col-6">
+              <h3>Translate</h3>
+            </div>
+            <div className="col-6 text-right float-right">
+              {isloading === true ? (
+                <div>
+                  {/* <Spinner
                   size={50}
                   spinnerColor={"#333"}
                   spinnerWidth={2}
                   visible={true} /> */}
-                  {console.log('loading')}
-              </div>
-            ) : (
+                  {console.log("loading")}
+                </div>
+              ) : (
                 ""
               )}
-          </div>
-        </div>
-        <div className="row">
-          {error !== "" ? (
-            <div
-              className="alert alert-danger mx-auto"
-              style={{ width: "94%" }}
-            >
-              {error}
             </div>
-          ) : (
+          </div>
+          <div className="row">
+            {error !== "" ? (
+              <div
+                className="alert alert-danger mx-auto"
+                style={{ width: "94%" }}
+              >
+                {error}
+              </div>
+            ) : (
               ""
             )}
-        </div>
-        <div className="row">
-          <div className="col-xs-12 col-sm-12 col-md-6 col-lg-6">
-            <div className="card">
-              <div className="card-header">
-                <div className="row">
-                  <div className="col-6">
-                    <p className="lead">English</p>
-                  </div>
-                  <div className="col-6 text-right">
-                    <button
-                      onClick={e => this.translateTo("ibibio")}
-                      className="btn btn-primary"
-                    >
-                      translate
-                    </button>
+          </div>
+          <div className="row">
+            <div className="col-xs-12 col-sm-12 col-md-6 col-lg-6">
+              <div className="card">
+                <div className="card-header">
+                  <div className="row">
+                    <div className="col-6">
+                      <p className="lead">English</p>
+                    </div>
+                    <div className="col-6 text-right">
+                      <button
+                        onClick={e => this.translateTo("ibibio")}
+                        className="btn btn-primary"
+                      >
+                        translate
+                      </button>
+                    </div>
                   </div>
                 </div>
+                <div className="card-body">
+                  <textarea
+                    required
+                    rows="3"
+                    name="english"
+                    className="form-control"
+                    value={english}
+                    onChange={e => this.onInputChanged(e)}
+                    style={styles.fontSize}
+                  />
+                </div>
               </div>
-              <div className="card-body">
-                <textarea
-                  required
-                  rows="3"
-                  name="english"
-                  className="form-control"
-                  value={english}
-                  onChange={e => this.onInputChanged(e)}
-                  style={styles.fontSize}
-                />
+            </div>
+            <div className="col-xs-12 col-sm-12 col-md-6 col-lg-6">
+              <div className="card">
+                <div className="card-header">
+                  <div className="row">
+                    <div className="col-6">
+                      <p className="lead">ibibio</p>
+                    </div>
+                    <div className="col-6 text-right">
+                      <button
+                        onClick={e => this.translateTo("english")}
+                        className="btn btn-primary"
+                      >
+                        translate
+                      </button>
+                    </div>
+                  </div>
+                </div>
+                <div className="card-body">
+                  <textarea
+                    required
+                    rows="3"
+                    name="ibibio"
+                    className="form-control"
+                    value={ibibio}
+                    onChange={e => this.onInputChanged(e)}
+                    style={styles.fontSize}
+                  />
+                </div>
               </div>
             </div>
           </div>
-          <div className="col-xs-12 col-sm-12 col-md-6 col-lg-6">
-            <div className="card">
-              <div className="card-header">
-                <div className="row">
-                  <div className="col-6">
-                    <p className="lead">ibibio</p>
-                  </div>
-                  <div className="col-6 text-right">
-                    <button
-                      onClick={e => this.translateTo("english")}
-                      className="btn btn-primary"
-                    >
-                      translate
-                    </button>
-                  </div>
-                </div>
-              </div>
-              <div className="card-body">
-                <textarea
-                  required
-                  rows="3"
-                  name="ibibio"
-                  className="form-control"
-                  value={ibibio}
-                  onChange={e => this.onInputChanged(e)}
-                  style={styles.fontSize}
-                />
-              </div>
-            </div>
-          </div>
-        </div>
-        <div className="row text-center mt-3" />
-      </div>
-      </div>
+          <div className="row text-center mt-3" />
+
+      </Layout>
     );
   }
 }
