@@ -18,8 +18,6 @@ const app = express();
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 
-// mongoose.Promise = global.Promise;
-// mongoose.set("useFindAndModify", false);
 mongoose
   .connect(
     MONGODB_URI,
