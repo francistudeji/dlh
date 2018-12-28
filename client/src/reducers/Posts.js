@@ -8,11 +8,15 @@ export default function posts(state = [], action = {}) {
         ...state
       };
     case SET_POSTS:
-      let i = state.findIndex(el => el._id === action.payload._id);
-      if (i === -1) {
-        return [...state, ...action.payload];
+      // let i = state.findIndex(el => el._id === action.payload._id);
+      // if (i === -1) {
+      //   return [...state, ...action.payload];
+      // }
+      // return state;
+      return {
+        ...state,
+        posts: [...action.payload]
       }
-      return state;
     default:
       return state;
   }
