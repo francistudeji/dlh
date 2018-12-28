@@ -6,6 +6,7 @@ const mongoose = require("mongoose");
 const newUserRoute = require("./api/routes/DLHUser");
 const newChatKitUserRoute = require("./api/routes/ChatkitUser");
 const ChatKitAuthenticateRoute = require("./api/routes/ChatKitAuthenticate");
+const posts = require("./api/routes/Posts");
 
 const MONGODB_URI =
   process.env.MONGODB_URI ||
@@ -14,37 +15,34 @@ const PORT = process.env.PORT || 3001;
 
 const app = express();
 
-app.use(cors());
-app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
+app.use(bodyParser.json());
 
+// mongoose.Promise = global.Promise;
+// mongoose.set("useFindAndModify", false);
+mongoose
+  .connect(
+    MONGODB_URI,
+    { useNewUrlParser: true, useCreateIndex: true }
+  )
+  .then(() => console.log("MongoDB Connected"))
+  .catch(err => console.log(err));
+
+app.use(cors());
 // listen for requests
 app.use("/api/newUser", newUserRoute);
 app.use("/api/newChatkitUser", newChatKitUserRoute);
 app.use("/api/chatkitAuthenticate", ChatKitAuthenticateRoute);
+app.use("/api/posts", posts);
 
-mongoose.Promise = global.Promise;
-mongoose.set("useFindAndModify", false);
-mongoose.connect(
-  MONGODB_URI,
-  { useNewUrlParser: true, useCreateIndex: true }
-);
-
-const db = mongoose.connection;
-db.on("error", err => console.log(err));
-db.once("open", () => {
-  require("./api/routes/Posts")(app);
-  console.log(`Mongoose Server started`);
-});
-
+// Server static assets if in production
 if (process.env.NODE_ENV === "production") {
+  // Set static folder
   app.use(express.static("public"));
+
   app.get("*", (req, res) => {
     res.sendFile(path.resolve(__dirname, "public", "index.html"));
   });
 }
 
-app.listen(PORT, err => {
-  if (err) console.log(`Server error ${err}`);
-  console.log(`Server started on port ${PORT}`);
-});
+app.listen(PORT, () => console.log(`Server running on PORT ${PORT}`));

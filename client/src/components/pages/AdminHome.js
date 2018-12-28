@@ -54,7 +54,7 @@ class AdminHome extends Component {
     })
     .then(res => {
       //console.log(res.data);
-      this.setState({ posts: [...this.state.posts, ...res.data] });
+      this.setState({ posts: [...this.state.posts, ...res.data.posts] });
     })
     .catch(err => console.log({ err }));
 

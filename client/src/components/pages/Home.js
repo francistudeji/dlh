@@ -27,7 +27,7 @@ class Home extends Component {
       method: "get"
     })
       .then(res => {
-        this.setState({ posts: [...this.state.posts, ...res.data] });
+        this.setState({ posts: [...this.state.posts, ...res.data.posts] });
       })
       .catch(err => console.log({ err }));
   };
@@ -42,7 +42,7 @@ class Home extends Component {
   componentDidMount() {
     this.checkAuthentication();
     this.props.setPosts()
-    console.log(this.props)
+    //console.log(this.props)
   }
 
   login = async () => {
@@ -118,7 +118,7 @@ class Home extends Component {
             ? this.props.posts.map(post => (
               <PostCard key={post._id} posts={post} />
             ))
-              : <div className="text-center">Loading...</div>
+              : <p className="h1 lead text-center mx-auto">Loading...</p>
             }
         </div>
       </Layout>
