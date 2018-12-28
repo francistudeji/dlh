@@ -23,7 +23,7 @@ class Home extends Component {
 
   getPosts = () => {
     axios({
-      url: "http://localhost:4000/api/posts",
+      url: "/api/posts",
       method: "get"
     })
       .then(res => {

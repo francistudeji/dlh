@@ -38,7 +38,7 @@ export default withAuth(
             instanceLocator: "v1:us1:3b00ed07-103c-4828-8fd7-271bb696c15d",
             userId: this.state.currentUserName,
             tokenProvider: new Chatkit.TokenProvider({
-              url: "http://localhost:4000/api/chatkitAuthenticate"
+              url: "/api/chatkitAuthenticate"
             })
           });
 

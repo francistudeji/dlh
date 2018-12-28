@@ -37,7 +37,7 @@ class Blog extends Component {
 
   findPostById = id => {
     axios({
-      url: `http://localhost:4000/api/posts/${id}`,
+      url: `/api/posts/${id}`,
       method: "get"
     })
       .then(res => {

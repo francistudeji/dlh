@@ -49,7 +49,7 @@ class AdminHome extends Component {
   componentDidMount() {
 
     axios({
-      url: "http://localhost:4000/api/posts",
+      url: "/api/posts",
       method: "get"
     })
     .then(res => {
@@ -84,7 +84,7 @@ class AdminHome extends Component {
         const { title, author, description, content, slug } = this.state;
 
         axios({
-          url: "http://localhost:4000/api/posts",
+          url: "api/posts",
           method: "post",
           data: {
             title,

@@ -5,14 +5,10 @@
   "dependencies": {
     "@okta/okta-auth-js": "^2.0.1",
     "@okta/okta-react": "^1.1.4",
-
     "@okta/okta-signin-widget": "^2.13.0",
     "@pusher/chatkit": "^0.7.18",
-
     "axios": "^0.18.0",
-
     "date-fns": "^1.29.0",
-
     "react": "^16.6.0",
     "react-dom": "^16.6.0",
     "react-redux": "^5.0.7",
@@ -45,5 +41,5 @@
     "concurrently": "^4.0.1",
     "nodemon": "^1.18.6"
   },
-  "proxy": "http://localhost:4000"
+  "proxy": "http://localhost:8000"
 }
