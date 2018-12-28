@@ -13,7 +13,7 @@ export function setPosts() {
       })
         .then(res => {
           dispatch({ type: SET_LOADING, payload: false });
-          dispatch({ type: SET_POSTS, payload: res.data });
+          dispatch({ type: SET_POSTS, payload: res.data.posts });
         })
         .catch(err => {
           if(err) console.log({err})
