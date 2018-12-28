@@ -43,7 +43,7 @@ export default withAuth(
     handleSubmit = e => {
       e.preventDefault();
       const newState = { ...this.state };
-      fetch("http://localhost:4000/api/newUser", {
+      fetch("/api/newUser", {
         method: "POST",
         headers: {
           Accept: "application/json",
@@ -75,7 +75,7 @@ export default withAuth(
     };
 
     createNewChatkitUser = (displayName, email) => {
-      fetch("http://localhost:4000/api/newChatkitUser", {
+      fetch("/api/newChatkitUser", {
         method: "POST",
         headers: {
           "Content-Type": "application/json"

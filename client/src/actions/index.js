@@ -8,7 +8,7 @@ export function setPosts() {
   return dispatch => {
     setTimeout(async () => {
       axios({
-        url: "http://localhost:4000/api/posts",
+        url: "4000/api/posts",
         method: "get"
       })
         .then(res => {

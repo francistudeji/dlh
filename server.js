@@ -10,7 +10,7 @@ const ChatKitAuthenticateRoute = require("./api/routes/ChatKitAuthenticate");
 const MONGODB_URI =
   process.env.MONGODB_URI ||
   "mongodb://francisudeji:desales9563@ds025469.mlab.com:25469/dakada-language-hub";
-const PORT = process.env.PORT || 8000;
+const PORT = process.env.PORT || 3001;
 
 const app = express();
 
