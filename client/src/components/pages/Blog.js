@@ -41,7 +41,7 @@ class Blog extends Component {
       method: "get"
     })
       .then(res => {
-        this.setState({ posts: [...this.state.posts, res.data] });
+        this.setState({ posts: [...this.state.posts, res.data.post] });
       })
       .catch(err => console.log({ err }));
   };
