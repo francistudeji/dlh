@@ -24,36 +24,31 @@ app.use("/api/newChatkitUser", newChatKitUserRoute);
 app.use("/api/chatkitAuthenticate", ChatKitAuthenticateRoute);
 app.disable("X-Powered-By");
 
-if(process.env.NODE_ENV === "production") {
+mongoose.Promise = global.Promise;
+mongoose.set("useFindAndModify", false);
+mongoose.connect(
+  MONGODB_URI,
+  { useNewUrlParser: true }
+);
+
+const db = mongoose.connection;
+db.on("error", err => console.log(err));
+db.once("open", () => {
+  require("./api/routes/Posts")(app);
+  console.log(`Mongoose Server started`);
+});
+
+if(process.env.NODE_ENV === "production"){
   app.use(express.static('public'))
   app.get("*", (req, res) => {
     res.sendFile(path.resolve(__dirname, "public", "index.html"));
   })
 }
 
-async function connect(cb) {
-  // Connect to Mongoose
-  mongoose.Promise = global.Promise;
-  mongoose.set("useFindAndModify", false);
-  mongoose.connect(
-    MONGODB_URI,
-    { useNewUrlParser: true }
-  );
-
-  const db = mongoose.connection;
-  db.on("error", err => console.log(err));
-  db.once("open", () => {
-    require("./api/routes/Posts")(app);
-    console.log(`Mongoose Server started`);
-  });
-  await cb()
-}
-connect(async () => {
-  // run node server and listen on port 3001
-  await app.listen(PORT, err => {
-    if (err) console.log(`Server error ${err}`);
-    console.log(`Server started on port ${PORT}`)
-  });
+app.listen(PORT, err => {
+  if (err) console.log(`Server error ${err}`);
+  console.log(`Server started on port ${PORT}`)
 });
+
 
 
