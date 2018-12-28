@@ -13,10 +13,10 @@ export default function posts(state = [], action = {}) {
       //   return [...state, ...action.payload];
       // }
       // return state;
-      return {
+      return [
         ...state,
-        posts: [...action.payload]
-      }
+        action.payload
+      ]
     default:
       return state;
   }
