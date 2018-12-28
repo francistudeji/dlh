@@ -1,11 +1,11 @@
 const express = require("express");
 const bodyParser = require("body-parser");
 const cors = require("cors");
-const path = require('path')
+const path = require("path")
 const mongoose = require("mongoose");
-const newUserRoute = require("./src/api/routes/DLHUser");
-const newChatKitUserRoute = require("./src/api/routes/ChatkitUser");
-const ChatKitAuthenticateRoute = require("./src/api/routes/ChatKitAuthenticate");
+const newUserRoute = require("./api/routes/DLHUser");
+const newChatKitUserRoute = require("./api/routes/ChatkitUser");
+const ChatKitAuthenticateRoute = require("./api/routes/ChatKitAuthenticate");
 
 const MONGODB_URI =
   process.env.MONGODB_URI ||
@@ -22,15 +22,16 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use("/api/newUser", newUserRoute);
 app.use("/api/newChatkitUser", newChatKitUserRoute);
 app.use("/api/chatkitAuthenticate", ChatKitAuthenticateRoute);
-app.disable('X-Powered-By')
+app.disable("X-Powered-By");
 
-// app.get('*', (req, res, next) => {
-//   res.sendFile(path.join(__dirname, 'build', 'index.html'))
-// })
+if(process.env.NODE_ENV === "production") {
+  app.use(express.static('public'))
+  app.get("*", (req, res) => {
+    res.sendFile(path.resolve(__dirname, "public", "index.html"));
+  })
+}
 
-// run node server and listen on port 3001
-app.listen(PORT, err => {
-  if (err) console.log(`Server error ${err}`);
+async function connect(cb) {
   // Connect to Mongoose
   mongoose.Promise = global.Promise;
   mongoose.set("useFindAndModify", false);
@@ -38,13 +39,21 @@ app.listen(PORT, err => {
     MONGODB_URI,
     { useNewUrlParser: true }
   );
+
+  const db = mongoose.connection;
+  db.on("error", err => console.log(err));
+  db.once("open", () => {
+    require("./api/routes/Posts")(app);
+    console.log(`Mongoose Server started`);
+  });
+  await cb()
+}
+connect(async () => {
+  // run node server and listen on port 3001
+  await app.listen(PORT, err => {
+    if (err) console.log(`Server error ${err}`);
+    console.log(`Server started on port ${PORT}`)
+  });
 });
 
-const db = mongoose.connection;
 
-db.on("error", err => console.log(err));
-
-db.once("open", () => {
-  require("./src/api/routes/Posts")(app);
-  console.log(`Server started on port ${PORT}`);
-});

@@ -8,10 +8,11 @@ import Translate from "./components/pages/Translate";
 import Login from "./components/auth/Login";
 import Register from "./components/auth/Register";
 import Profile from "./components/auth/Profile";
-
 import AdminLogin from "./components/pages/AdminLogin";
 import AdminHome from "./components/pages/AdminHome";
-
+import Blog from "./components/pages/Blog";
+import Maps from "./components/pages/Maps";
+import axios from "axios";
 import { Security, SecureRoute, ImplicitCallback } from "@okta/okta-react";
 
 function onAuthRequired({ history }) {
@@ -45,6 +46,8 @@ class App extends Component {
               <SecureRoute path="/profile" component={Profile} />
               <Route path="/admin/login" component={AdminLogin} />
               <Route path="/admin/home" component={AdminHome} />
+              <Route exact path="/blog/:id/:slug" component={Blog} />
+              <Route exact path="/maps" component={Maps} />
             </Switch>
           </React.Fragment>
         </Security>

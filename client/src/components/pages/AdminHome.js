@@ -249,7 +249,8 @@ class AdminHome extends Component {
                   <tbody>
                     {
                       this.state.posts.length !== 0 ? (
-                        this.state.posts.map((post, i) => <tr key={post.title}>
+                        this.state.posts.map((post, i) =>
+                        <tr key={post.title}>
                           <th scope="row">{i}</th>
                           <td>{post.title}</td>
                           <td>{post.author}</td>

@@ -66,12 +66,12 @@ export default withAuth(class Navbar extends Component {
             <ul className="navbar-nav">
               <li className="nav-item">
                 <Link className="nav-link" to="/translate">
-                  Translate
+                  Translator
                 </Link>
               </li>
               <li className="nav-item">
-                <Link className="nav-link" to="/blog">
-                  Blog
+                <Link className="nav-link" to="/maps">
+                  Maps
                 </Link>
               </li>
               <li className="nav-item">
