@@ -23,7 +23,7 @@ export function setPosts() {
 }
 
 //
-export function getPosts() {
+export function getPost() {
   return dispatch => {
     dispatch({ type: GET_POSTS });
   };

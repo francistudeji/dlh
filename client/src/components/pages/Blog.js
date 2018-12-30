@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 //actions
-import { setPosts } from "../../actions";
+import { getPost } from "../../actions";
 //REDUX
 import { connect } from "react-redux";
 import PostCard from "../post";
@@ -22,16 +22,17 @@ class Blog extends Component {
   }
 
   componentDidMount() {
-    this.listen = this.props.history.listen((loc, action) => {
-      console.log(loc, action);
-    });
-    this.props.setPosts();
+
+    // this.listen = this.props.history.listen((loc, action) => {
+    //   console.log(loc, action);
+    // });
+    // this.props.setPosts();
     const slug = this.props.match.params.slug;
     const id = this.props.match.params.id;
 
     this.findPostById(id);
     this.setState({ id, slug }, () => {
-      console.log(this.state);
+      getPost(id)
     });
   }
 
@@ -50,29 +51,31 @@ class Blog extends Component {
     return (
       <Layout>
         <div className="row">
-          <div className="col-xs-12 col-sm-12 col-md-8 col-lg-8 mx-auto" />
           {this.state.posts.length > 0 ? (
             this.state.posts.map(post => (
-              <div className="row px-5" key={post.slug}>
-                <div className="col-xs-12 col-sm-12 col-md-10 col-lg-8 mx-auto">
-                  <Link to="/" className="btn btn-outline-danger mb-3">
-                    &larr; Back Home
-                  </Link>
-                  <br />
-                  <h1 className="mb-3">{post.title}</h1>
-                  <div className="mb-3">
-                    <em className="text-muted">{post.description}</em>
-                  </div>
-                  <div className="mb-4 text-muted">
-                    By <span className="text-danger">{post.author}</span> |{" "}
-                    {format(post.createdAt, "Do MMMM YYYY")}
-                  </div>
-                  <div className="lead">{renderHTML(post.content)}</div>
+              <div
+                className="col-xs-12 col-sm-12 col-md-10 col-lg-8 mx-auto px-5"
+                key={post.slug}
+              >
+                <Link to="/" className="btn btn-outline-danger mb-3">
+                  &larr; Back Home
+                </Link>
+                <br />
+                <h1 className="mb-3">{post.title}</h1>
+                <div className="mb-3">
+                  <em className="text-muted">{post.description}</em>
                 </div>
+                <div className="mb-4 text-muted">
+                  By <span className="text-danger">{post.author}</span> |{" "}
+                  {format(post.createdAt, "Do MMMM YYYY")}
+                </div>
+                <div className="lead">{renderHTML(post.content)}</div>
               </div>
             ))
           ) : (
-            <p>loading...</p>
+            <div className="col-12 text-center mx-auto">
+              <p className="h1 lead mt-5 ">Loading...</p>
+            </div>
           )}
         </div>
       </Layout>
@@ -89,5 +92,5 @@ function mapStateToProps(state) {
 
 export default connect(
   mapStateToProps,
-  { setPosts }
+  { getPost }
 )(Blog);
