@@ -13,7 +13,6 @@ import RootReducer from "./reducers/RootReducer";
 
 // initial state
 const initialState = {
-  posts: [],
   isLoading: true
 };
 

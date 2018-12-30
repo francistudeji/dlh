@@ -15,7 +15,7 @@ export default function posts(state = [], action = {}) {
       // return state;
       return [
         ...state,
-        action.payload
+        ...action.payload
       ]
     default:
       return state;
