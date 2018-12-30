@@ -3,6 +3,8 @@ import { Link } from "react-router-dom";
 import axios from "axios";
 import ReactQuill from "react-quill";
 import "react-quill/dist/quill.snow.css";
+import { isAdminAuthenticated } from '../lib/authenticate'
+import { Redirect } from 'react-router-dom'
 
 const App = {
   modules: {
@@ -43,20 +45,28 @@ class AdminHome extends Component {
     description: "",
     content: "",
     slug: "",
-    posts: []
+    posts: [],
+    redirect: false
   };
 
   componentDidMount() {
+    const admin = localStorage.getItem('admin')
 
-    axios({
-      url: "/api/posts",
-      method: "get"
-    })
-    .then(res => {
-      //console.log(res.data);
-      this.setState({ posts: [...this.state.posts, ...res.data.posts] });
-    })
-    .catch(err => console.log({ err }));
+    if (!admin || admin.token) {
+      this.setState({ redirect: true })
+    } else {
+
+      axios({
+        url: "/api/posts",
+        method: "get"
+      })
+        .then(res => {
+          //console.log(res.data);
+          this.setState({ posts: [...this.state.posts, ...res.data.posts] });
+        })
+        .catch(err => console.log({ err }));
+    }
+
 
   }
 
@@ -109,11 +119,19 @@ class AdminHome extends Component {
     );
   };
 
+  logout = () => {
+    this.setState({redirect: true}, () => localStorage.removeItem('admin'))
+  }
+
   toggleCreate = bool => {
     this.setState({ isCreateView: bool });
   };
 
   render() {
+    const {redirect} = this.state
+    if (redirect) {
+      return <Redirect to="/admin/login" />
+    }
     return (
       <div className="admin-home">
         <nav
@@ -133,9 +151,9 @@ class AdminHome extends Component {
               role="group"
               aria-label="Authentication"
             >
-              <Link to="/admin/logout" className="btn btn-danger">
+              <button className="btn btn-dark" onClick={this.logout}>
                 Logout
-              </Link>
+              </button>
             </div>
           </div>
         </nav>
@@ -156,7 +174,12 @@ class AdminHome extends Component {
                     className="nav-link text-light btn btn-danger"
                     onClick={() => this.toggleCreate(false)}
                   >
-                    Posts <div className="badge badge-light">{this.state.posts.length > 0 ? this.state.posts.length: null}</div>
+                    Posts{" "}
+                    <div className="badge badge-light">
+                      {this.state.posts.length > 0
+                        ? this.state.posts.length
+                        : null}
+                    </div>
                   </button>
                 </li>
                 <li className="nav-item">
@@ -247,22 +270,33 @@ class AdminHome extends Component {
                     </tr>
                   </thead>
                   <tbody>
-                    {
-                      this.state.posts.length !== 0 ? (
-                        this.state.posts.map((post, i) =>
-                        <tr key={post.title}>
-                          <th scope="row">{i}</th>
-                          <td>{post.title}</td>
-                          <td>{post.author}</td>
-                          <td>
-                            <div className="btn-group">
-                              <button data-id={post._id} id={post._id} className="btn btn-primary">Edit</button>
-                              <button data-id={post._id} id={post._id} className="btn btn-danger">Delete</button>
-                            </div>
-                          </td>
-                        </tr>)
-                      ):null
-                    }
+                    {this.state.posts.length !== 0
+                      ? this.state.posts.map((post, i) => (
+                          <tr key={post.title}>
+                            <th scope="row">{i}</th>
+                            <td>{post.title}</td>
+                            <td>{post.author}</td>
+                            <td>
+                              <div className="btn-group">
+                                <button
+                                  data-id={post._id}
+                                  id={post._id}
+                                  className="btn btn-primary"
+                                >
+                                  Edit
+                                </button>
+                                <button
+                                  data-id={post._id}
+                                  id={post._id}
+                                  className="btn btn-danger"
+                                >
+                                  Delete
+                                </button>
+                              </div>
+                            </td>
+                          </tr>
+                        ))
+                      : null}
                   </tbody>
                 </table>
               </div>

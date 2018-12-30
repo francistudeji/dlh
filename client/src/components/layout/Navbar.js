@@ -79,7 +79,7 @@ export default withAuth(class Navbar extends Component {
                   Forum
                 </Link>
               </li>
-              <li className="nav-item">
+              {/* <li className="nav-item">
                 <Link className="nav-link" to="/about">
                   About
                 </Link>
@@ -88,7 +88,7 @@ export default withAuth(class Navbar extends Component {
                 <Link className="nav-link" to="/contact">
                   Contact
                 </Link>
-              </li>
+              </li> */}
             </ul>
             <div
               className="btn-group ml-auto"
