@@ -11,7 +11,7 @@ class IbibioGrammer extends Component {
 
   componentDidMount() {
     axios({
-      url: "http://localhost:5000/api/resources",
+      url: "/api/resources",
       method: "get"
     })
       .then(res => {

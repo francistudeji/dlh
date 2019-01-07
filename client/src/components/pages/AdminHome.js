@@ -105,7 +105,7 @@ class AdminHome extends Component {
       }
     }
 
-    axios.post("http://localhost:5000/api/resources", data, config)
+    axios.post("/api/resources", data, config)
       .then(res => {
         this.setState({ filemsg: "Success uploading file"})
       })
