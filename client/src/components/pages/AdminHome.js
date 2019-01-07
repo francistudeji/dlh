@@ -3,8 +3,7 @@ import { Link } from "react-router-dom";
 import axios from "axios";
 import ReactQuill from "react-quill";
 import "react-quill/dist/quill.snow.css";
-import { isAdminAuthenticated } from '../lib/authenticate'
-import { Redirect } from 'react-router-dom'
+import { Redirect } from "react-router-dom";
 
 const App = {
   modules: {
@@ -39,23 +38,28 @@ const App = {
 
 class AdminHome extends Component {
   state = {
-    isCreateView: true,
+    view: "new",
     title: "",
     author: "",
     description: "",
     content: "",
     slug: "",
     posts: [],
-    redirect: false
+    redirect: false,
+    gname: "",
+    gdescription: "",
+    gfile: "",
+    postmsg: null,
+    filemsg: null,
+    percentage: null
   };
 
   componentDidMount() {
-    const admin = localStorage.getItem('admin')
+    const admin = localStorage.getItem("admin");
 
     if (!admin || admin.token) {
-      this.setState({ redirect: true })
+      this.setState({ redirect: true });
     } else {
-
       axios({
         url: "/api/posts",
         method: "get"
@@ -66,19 +70,55 @@ class AdminHome extends Component {
         })
         .catch(err => console.log({ err }));
     }
-
-
   }
 
   onInputChange = e => {
     this.setState({ [e.target.id]: e.target.value });
   };
 
+  handleInputChange = e => {
+    this.setState({ [e.target.name]: e.target.value });
+  };
+
+  handleFileInputChange = e => {
+    this.setState({ gfile: e.target.files[0] })
+  }
+
   onContentInputChange = e => {
     this.setState({
       content: e
     });
   };
+
+  onSubmitFile = e => {
+    e.preventDefault();
+    const { gname, gdescription, gfile } = this.state;
+    const data = new FormData();
+    data.append('name', gname)
+    data.append('description', gdescription);
+    data.append('avatar', gfile);
+
+    const config = {
+      onUploadProgress: progressEvent => {
+        let percentCompleted = Math.round((progressEvent.loaded * 100) / progressEvent.total)
+        this.setState({percentage: percentCompleted})
+      }
+    }
+
+    axios.post("http://localhost:5000/api/resources", data, config)
+      .then(res => {
+        this.setState({ filemsg: "Success uploading file"})
+      })
+      .catch(err => {
+        this.setState({ filemsg: "Error uploading file" })
+      });
+      this.setState({
+        gname: "",
+        gdescription: "",
+        gfile: ""
+      });
+
+  }
 
   onSubmitPost = e => {
     e.preventDefault();
@@ -105,9 +145,9 @@ class AdminHome extends Component {
           }
         })
           .then(res => {
-            console.log(res.data);
+            this.setState({postmsg: res.data.message})
           })
-          .catch(err => console.log({ err }));
+          .catch(err => this.setState({ postmsg: "Error adding post" }));
         this.setState({
           title: "",
           author: "",
@@ -120,17 +160,17 @@ class AdminHome extends Component {
   };
 
   logout = () => {
-    this.setState({redirect: true}, () => localStorage.removeItem('admin'))
-  }
+    this.setState({ redirect: true }, () => localStorage.removeItem("admin"));
+  };
 
-  toggleCreate = bool => {
-    this.setState({ isCreateView: bool });
+  toggleCreate = view => {
+    this.setState({ view });
   };
 
   render() {
-    const {redirect} = this.state
+    const { redirect } = this.state;
     if (redirect) {
-      return <Redirect to="/admin/login" />
+      return <Redirect to="/admin/login" />;
     }
     return (
       <div className="admin-home">
@@ -141,7 +181,7 @@ class AdminHome extends Component {
           <div className="container">
             <Link className="navbar-brand" to="/">
               <h4>
-                <strong>DLH</strong>{" "}
+                <strong>ILH</strong>{" "}
                 <em style={{ fontSize: "1.2rem" }}>Dashboard</em>
               </h4>
             </Link>
@@ -164,7 +204,7 @@ class AdminHome extends Component {
                 <li className="nav-item">
                   <button
                     className="nav-link active text-light btn btn-danger"
-                    onClick={() => this.toggleCreate(true)}
+                    onClick={() => this.toggleCreate("new")}
                   >
                     New
                   </button>
@@ -172,7 +212,15 @@ class AdminHome extends Component {
                 <li className="nav-item">
                   <button
                     className="nav-link text-light btn btn-danger"
-                    onClick={() => this.toggleCreate(false)}
+                    onClick={() => this.toggleCreate("grammer")}
+                  >
+                    Grammer
+                  </button>
+                </li>
+                <li className="nav-item">
+                  <button
+                    className="nav-link text-light btn btn-danger"
+                    onClick={() => this.toggleCreate("posts")}
                   >
                     Posts{" "}
                     <div className="badge badge-light">
@@ -194,12 +242,15 @@ class AdminHome extends Component {
 
         <main className="main-content">
           <div className="container">
-            {this.state.isCreateView ? (
+            {this.state.view === "new" ? (
               <div className="create" style={{ marginBottom: 100 }}>
                 <div className="row">
                   <div className="col-12">
                     <h3 className="mt-3">Create a New Blog Post</h3>
                     <div className="card card-body my-3">
+                    {this.state.postmsg !== null ? (
+                      <div className="alert alert-success alert-dismissable">{this.state.postmsg}</div>
+                    ) : null}
                       <form onSubmit={this.onSubmitPost}>
                         <div className="form-group">
                           <label htmlFor="title">Title</label>
@@ -258,7 +309,9 @@ class AdminHome extends Component {
                   </div>
                 </div>
               </div>
-            ) : (
+            ) : null}
+
+            {this.state.view === "posts" ? (
               <div className="manage">
                 <table className="table">
                   <thead>
@@ -300,7 +353,67 @@ class AdminHome extends Component {
                   </tbody>
                 </table>
               </div>
-            )}
+            ) : null}
+
+            {this.state.view === "grammer" ? (
+              <div className="create" style={{ marginBottom: 100 }}>
+                <div className="row">
+                  <div className="col-12">
+                    <h3 className="mt-3">Create a Grammer Resource</h3>
+                    <div className="card card-body my-3">
+                      {this.state.filemsg !== null ? (
+                        <div className="alert alert-success alert-dismissable">{this.state.filemsg}</div>
+                      ) : null}
+                      <form onSubmit={this.onSubmitFile}>
+                        <div className="form-group">
+                          <label htmlFor="title">Name</label>
+                          <input
+                            type="text"
+                            name="gname"
+                            className="form-control"
+                            placeholder="Name of file"
+                            required
+                            onChange={this.handleInputChange}
+                            value={this.state.gname}
+                          />
+                        </div>
+                        <div className="form-group">
+                          <label htmlFor="description">Meta Description</label>
+                          <textarea
+                            name="gdescription"
+                            className="form-control"
+                            placeholder="Type meta description here"
+                            required
+                            onChange={this.handleInputChange}
+                            value={this.state.gdescription}
+                          />
+                        </div>
+                        <div className="form-group">
+                          <label htmlFor="content">Content</label>
+                          <input
+                            type="file"
+                            name="gfile"
+                            className="form-control"
+                            required
+                            onChange={this.handleFileInputChange}
+                          />
+                        </div>
+                        <div className="form-group text-center">
+                          {this.state.percentage !== null
+                            ? (<p className="lead">{this.state.percentage + "%"}</p>)
+                            : null}
+                        </div>
+                        <input
+                          type="submit"
+                          value="Publish"
+                          className="btn btn-danger btn-block btn-lg mt-5 mb-3"
+                        />
+                      </form>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            ) : null}
           </div>
         </main>
       </div>

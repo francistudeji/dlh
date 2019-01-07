@@ -11,6 +11,7 @@ import Profile from "./components/auth/Profile";
 import AdminLogin from "./components/pages/AdminLogin";
 import AdminHome from "./components/pages/AdminHome";
 import Blog from "./components/pages/Blog";
+import IbibioGrammer from './components/pages/IbibioGrammer'
 import Maps from "./components/pages/Maps";
 import axios from "axios";
 import { Security, SecureRoute, ImplicitCallback } from "@okta/okta-react";
@@ -48,6 +49,7 @@ class App extends Component {
               <Route path="/admin/home" component={AdminHome} />
               <Route exact path="/blog/:id/:slug" component={Blog} />
               <Route exact path="/maps" component={Maps} />
+              <Route exact path="/ibibio-grammer" component={IbibioGrammer} />
             </Switch>
           </React.Fragment>
         </Security>

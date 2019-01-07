@@ -70,7 +70,7 @@ class Home extends Component {
                 translate between languages, read blog posts, share files and
                 resources, observe maps and more{" "}
                 <strong className="text-danger" title="Dakada Language Hub">
-                  DLH
+                  ILH
                 </strong>{" "}
                 has you covered.
               </p>

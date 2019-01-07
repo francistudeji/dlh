@@ -7,7 +7,8 @@ const newUserRoute = require("./api/routes/DLHUser");
 const newChatKitUserRoute = require("./api/routes/ChatkitUser");
 const ChatKitAuthenticateRoute = require("./api/routes/ChatKitAuthenticate");
 const posts = require("./api/routes/Posts");
-const admin = require("./api/routes/Admin")
+const resources = require("./api/routes/Resources");
+const admin = require("./api/routes/Admin");
 
 const MONGODB_URI =
   process.env.MONGODB_URI ||
@@ -34,6 +35,8 @@ app.use("/api/newChatkitUser", newChatKitUserRoute);
 app.use("/api/chatkitAuthenticate", ChatKitAuthenticateRoute);
 app.use("/api/posts", posts);
 app.use("/api/admin", admin);
+app.use("/api/resources", resources);
+app.use(express.static("uploads"));
 
 // Server static assets if in production
 if (process.env.NODE_ENV === "production") {
