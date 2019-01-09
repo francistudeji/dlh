@@ -39,7 +39,7 @@ router.get("/:id", async (req, res, next) => {
 router.post("/", upload.single("avatar"), (req, res, next) => {
   const { name, description } = req.body;
 
-  const url = req.headers.host + "/" + req.file.originalname
+  const url = "https://ibibiolanguagehub.herokuapp.com" + "/" + req.file.originalname
   const resource = new Resource({
     name,
     description,
