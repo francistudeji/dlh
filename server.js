@@ -8,6 +8,7 @@ const newChatKitUserRoute = require("./api/routes/ChatkitUser");
 const ChatKitAuthenticateRoute = require("./api/routes/ChatKitAuthenticate");
 const posts = require("./api/routes/Posts");
 const resources = require("./api/routes/Resources");
+const dictionaries = require("./api/routes/Dictionaries");
 const admin = require("./api/routes/Admin");
 
 const MONGODB_URI =
@@ -21,10 +22,7 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 
 mongoose
-  .connect(
-    MONGODB_URI,
-    { useNewUrlParser: true, useCreateIndex: true }
-  )
+  .connect(MONGODB_URI, { useNewUrlParser: true, useCreateIndex: true })
   .then(() => console.log("MongoDB Connected"))
   .catch(err => console.log(err));
 
@@ -36,6 +34,7 @@ app.use("/api/chatkitAuthenticate", ChatKitAuthenticateRoute);
 app.use("/api/posts", posts);
 app.use("/api/admin", admin);
 app.use("/api/resources", resources);
+app.use("/api/dictionaries", dictionaries);
 app.use(express.static("uploads"));
 
 // Server static assets if in production

@@ -51,7 +51,10 @@ class AdminHome extends Component {
     gfile: "",
     postmsg: null,
     filemsg: null,
-    percentage: null
+    percentage: null,
+    englishWord: "",
+    ibibioWord: "",
+    dictionarymsg: null
   };
 
   componentDidMount() {
@@ -81,8 +84,8 @@ class AdminHome extends Component {
   };
 
   handleFileInputChange = e => {
-    this.setState({ gfile: e.target.files[0] })
-  }
+    this.setState({ gfile: e.target.files[0] });
+  };
 
   onContentInputChange = e => {
     this.setState({
@@ -94,31 +97,33 @@ class AdminHome extends Component {
     e.preventDefault();
     const { gname, gdescription, gfile } = this.state;
     const data = new FormData();
-    data.append('name', gname)
-    data.append('description', gdescription);
-    data.append('avatar', gfile);
+    data.append("name", gname);
+    data.append("description", gdescription);
+    data.append("avatar", gfile);
 
     const config = {
       onUploadProgress: progressEvent => {
-        let percentCompleted = Math.round((progressEvent.loaded * 100) / progressEvent.total)
-        this.setState({percentage: percentCompleted})
+        let percentCompleted = Math.round(
+          (progressEvent.loaded * 100) / progressEvent.total
+        );
+        this.setState({ percentage: percentCompleted });
       }
-    }
+    };
 
-    axios.post("/api/resources", data, config)
+    axios
+      .post("/api/resources", data, config)
       .then(res => {
-        this.setState({ filemsg: "Success uploading file"})
+        this.setState({ filemsg: "Success uploading file" });
       })
       .catch(err => {
-        this.setState({ filemsg: "Error uploading file" })
+        this.setState({ filemsg: "Error uploading file" });
       });
-      this.setState({
-        gname: "",
-        gdescription: "",
-        gfile: ""
-      });
-
-  }
+    this.setState({
+      gname: "",
+      gdescription: "",
+      gfile: ""
+    });
+  };
 
   onSubmitPost = e => {
     e.preventDefault();
@@ -145,7 +150,7 @@ class AdminHome extends Component {
           }
         })
           .then(res => {
-            this.setState({postmsg: res.data.message})
+            this.setState({ postmsg: res.data.message });
           })
           .catch(err => this.setState({ postmsg: "Error adding post" }));
         this.setState({
@@ -157,6 +162,29 @@ class AdminHome extends Component {
         });
       }
     );
+  };
+
+  onSubmitDictionary = e => {
+    const { ibibioWord, englishWord } = this.state;
+
+    axios({
+      url: "api/dictionaries",
+      method: "post",
+      data: {
+        englishWord,
+        ibibioWord
+      }
+    })
+      .then(res => {
+        this.setState({ dictionarymsg: res.data.message });
+      })
+      .catch(err =>
+        this.setState({ dictionarymsg: "Error adding words to dictionary" })
+      );
+    this.setState({
+      englishWord: "",
+      ibibioWord: ""
+    });
   };
 
   logout = () => {
@@ -231,6 +259,14 @@ class AdminHome extends Component {
                   </button>
                 </li>
                 <li className="nav-item">
+                  <button
+                    className="nav-link text-light btn btn-danger"
+                    onClick={() => this.toggleCreate("dictionary")}
+                  >
+                    Dictionary{" "}
+                  </button>
+                </li>
+                <li className="nav-item">
                   <Link to="/" className="nav-link text-light btn btn-danger">
                     Home
                   </Link>
@@ -248,9 +284,11 @@ class AdminHome extends Component {
                   <div className="col-12">
                     <h3 className="mt-3">Create a New Blog Post</h3>
                     <div className="card card-body my-3">
-                    {this.state.postmsg !== null ? (
-                      <div className="alert alert-success alert-dismissable">{this.state.postmsg}</div>
-                    ) : null}
+                      {this.state.postmsg !== null ? (
+                        <div className="alert alert-success alert-dismissable">
+                          {this.state.postmsg}
+                        </div>
+                      ) : null}
                       <form onSubmit={this.onSubmitPost}>
                         <div className="form-group">
                           <label htmlFor="title">Title</label>
@@ -362,7 +400,9 @@ class AdminHome extends Component {
                     <h3 className="mt-3">Create a Grammer Resource</h3>
                     <div className="card card-body my-3">
                       {this.state.filemsg !== null ? (
-                        <div className="alert alert-success alert-dismissable">{this.state.filemsg}</div>
+                        <div className="alert alert-success alert-dismissable">
+                          {this.state.filemsg}
+                        </div>
                       ) : null}
                       <form onSubmit={this.onSubmitFile}>
                         <div className="form-group">
@@ -399,13 +439,64 @@ class AdminHome extends Component {
                           />
                         </div>
                         <div className="form-group text-center">
-                          {this.state.percentage !== null
-                            ? (<p className="lead">{this.state.percentage + "%"}</p>)
-                            : null}
+                          {this.state.percentage !== null ? (
+                            <p className="lead">
+                              {this.state.percentage + "%"}
+                            </p>
+                          ) : null}
                         </div>
                         <input
                           type="submit"
                           value="Publish"
+                          className="btn btn-danger btn-block btn-lg mt-5 mb-3"
+                        />
+                      </form>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            ) : null}
+
+            {this.state.view === "dictionary" ? (
+              <div className="dictionary-create">
+                <div className="row">
+                  <div className="col-12">
+                    <h3 className="mt-3">Dictionary</h3>
+                    <div className="card card-body my-3">
+                      {this.state.dictionarymsg !== null ? (
+                        <div className="alert alert-success alert-dismissable">
+                          {this.state.dictionarymsg}
+                        </div>
+                      ) : null}
+                      <form onSubmit={this.onSubmitDictionary}>
+                        <div className="form-group">
+                          <label htmlFor="englishWord">Word in English</label>
+                          <input
+                            type="text"
+                            name="englishWord"
+                            className="form-control"
+                            placeholder="Word in English"
+                            required
+                            onChange={this.handleInputChange}
+                            value={this.state.englishWord}
+                          />
+                        </div>
+                        <div className="form-group">
+                          <label htmlFor="ibibioWord">Word in Ibibio</label>
+                          <input
+                            type="text"
+                            name="ibibioWord"
+                            className="form-control"
+                            placeholder="Word in Ibibio"
+                            required
+                            onChange={this.handleInputChange}
+                            value={this.state.ibibioWord}
+                          />
+                        </div>
+
+                        <input
+                          type="submit"
+                          value="Submit"
                           className="btn btn-danger btn-block btn-lg mt-5 mb-3"
                         />
                       </form>

@@ -5,7 +5,7 @@
   "main": "server.js",
   "dependencies": {
     "@okta/okta-sdk-nodejs": "^1.2.0",
-    "@pusher/chatkit-server": "^0.12.2",
+    "@pusher/chatkit-server": "^1.0.6",
     "axios": "^0.18.0",
     "bcryptjs": "^2.4.3",
     "body-parser": "^1.18.3",
