@@ -1,188 +1,153 @@
 import React, { Component } from "react";
-import OktaAuth from "@okta/okta-auth-js";
-import { withAuth } from "@okta/okta-react";
+import { Link } from "react-router-dom";
+import { firebase, db } from "../auth/firebase";
+import { Redirect } from "react-router-dom";
 
-const config = {
-  url: "https://dev-107219.oktapreview.com"
-};
-
-export default withAuth(
-  class Register extends Component {
-    constructor(props) {
-      super(props);
-      this.state = {
-        firstName: "",
-        lastName: "",
-        displayName: "",
-        email: "",
-        password: "",
-        sessionToken: null,
-        errors: [],
-        currentUsername: "",
-        currentScreen: ""
-      };
-      this.oktaAuth = new OktaAuth({ url: config.url });
-      this.checkAuthentication();
-    }
-
-    async checkAuthentication() {
-      const sessionToken = await this.props.auth.getIdToken();
-      if (sessionToken) {
-        this.setState({ sessionToken });
-      }
-    }
-
-    componentDidUpdate() {
-      this.checkAuthentication();
-    }
-
-    handleChange = e => {
-      this.setState({ [e.target.name]: e.target.value });
+class Register extends Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      firstName: "",
+      lastName: "",
+      displayName: "",
+      email: "",
+      password: "",
+      error: null,
+      currentUsername: "",
+      currentScreen: "",
+      to: null
     };
+  }
 
-    handleSubmit = e => {
-      e.preventDefault();
-      const newState = { ...this.state };
-      fetch("/api/newUser", {
-        method: "POST",
-        headers: {
-          Accept: "application/json",
-          "Content-Type": "application/json"
-        },
-        body: JSON.stringify(newState)
-      })
-        .then(blob => blob.json())
-        .then(res => {
-          if (res.status === 400) {
-            this.setState({ errors: res.errorCauses });
-          }
+  handleChange = e => {
+    this.setState({ [e.target.name]: e.target.value });
+  };
 
-          // create new chakit user
-          this.createNewChatkitUser(this.state.displayName, this.state.email);
-
-          this.oktaAuth
-            .signIn({
-              username: this.state.email,
-              password: this.state.password
-            })
-            .then(res => {
-              this.setState({
-                sessionToken: res.sessionToken
-              });
+  handleSubmit = e => {
+    e.preventDefault();
+    const { firstName, lastName, displayName, email, password } = this.state;
+    firebase
+      .auth()
+      .createUserWithEmailAndPassword(email, password)
+      .then(res => {
+        db.ref("users/")
+          .push({
+            firstName,
+            lastName,
+            displayName,
+            email
+          })
+          .then(res => {
+            this.redirecToForum();
+          })
+          .catch(err => {
+            this.setState({ error: err.message }, () => {
+              setTimeout(() => this.setState({ error: null }), 3000);
             });
-        })
-        .catch(err => console.log({ err }));
-    };
-
-    createNewChatkitUser = (displayName, email) => {
-      fetch("/api/newChatkitUser", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json"
-        },
-        body: JSON.stringify({ id: displayName, username: email })
-      })
-        .then(response => {
-          this.setState({
-            currentUsername: this.state.email,
-            currentScreen: "chatScreen"
+            window.scrollTo(0, 0);
           });
-          console.log({ response });
-        })
-        .catch(error => {
-          console.log({ error });
+      })
+      .catch(err => {
+        this.setState({ error: err.message }, () => {
+          setTimeout(() => this.setState({ error: null }), 3000);
         });
-    };
+        window.scrollTo(0, 0);
+      });
+  };
 
-    render() {
-      if (this.state.sessionToken) {
-        this.props.auth.redirect({ sessionToken: this.state.sessionToken });
-        return null;
-      }
-      return (
-        <div className="row my-5">
-          <div className="col-xs-12 col sm-10 col-md-8 col-lg-6 mx-auto">
-            <div className="card card-body mx-3">
-              {this.state.errors.length !== 0 ? (
-                <div className="alert alert-danger">
-                  <ul>
-                    {this.state.errors.map((err, i) => (
-                      <li key={i}>{err.errorSummary}</li>
-                    ))}
-                  </ul>
-                </div>
-              ) : null}
-              <form onSubmit={this.handleSubmit}>
-                <div className="form-group">
-                  <label htmlFor="firstName">First Name</label>
-                  <input
-                    type="text"
-                    name="firstName"
-                    id="firstName"
-                    onChange={this.handleChange}
-                    placeholder="What is your First Name"
-                    className="form-control"
-                    required
-                  />
-                </div>
-                <div className="form-group">
-                  <label htmlFor="lastName">Last Name</label>
-                  <input
-                    type="text"
-                    name="lastName"
-                    id="lastName"
-                    onChange={this.handleChange}
-                    placeholder="What is your Last Name"
-                    className="form-control"
-                    required
-                  />
-                </div>
-                <div className="form-group">
-                  <label htmlFor="displayName">Display Name</label>
-                  <input
-                    type="text"
-                    name="displayName"
-                    id="displayName"
-                    onChange={this.handleChange}
-                    placeholder="Choose a display name"
-                    className="form-control"
-                    required
-                  />
-                </div>
-                <div className="form-group">
-                  <label htmlFor="email">Email Address</label>
-                  <input
-                    type="email"
-                    name="email"
-                    id="email"
-                    onChange={this.handleChange}
-                    placeholder="Type your Email Address"
-                    className="form-control"
-                    required
-                  />
-                </div>
-                <div className="form-group">
-                  <label htmlFor="password">Password</label>
-                  <input
-                    type="password"
-                    name="password"
-                    id="password"
-                    onChange={this.handleChange}
-                    placeholder="Type a Password"
-                    className="form-control"
-                    required
-                  />
-                </div>
+  redirecToForum = () => {
+    this.setState({ to: "/forum" });
+  };
+
+  render() {
+    if (this.state.to !== null) return <Redirect to={this.state.to} />;
+    return (
+      <div className="row my-5">
+        <div className="col-xs-12 col sm-10 col-md-6 col-lg-6 mx-auto">
+          <div className="card card-body mx-3">
+            <h3 className="text-muted text-center">Register</h3>
+            {this.state.error !== null && (
+              <div className="alert alert-danger">{this.state.error}</div>
+            )}
+            <form onSubmit={this.handleSubmit}>
+              <div className="form-group">
+                <label htmlFor="firstName">First Name</label>
                 <input
-                  type="submit"
-                  value="Signup"
-                  className="btn btn-primary btn-block btn-lg"
+                  type="text"
+                  name="firstName"
+                  id="firstName"
+                  onChange={this.handleChange}
+                  placeholder="What is your First Name"
+                  className="form-control"
+                  required
                 />
-              </form>
+              </div>
+              <div className="form-group">
+                <label htmlFor="lastName">Last Name</label>
+                <input
+                  type="text"
+                  name="lastName"
+                  id="lastName"
+                  onChange={this.handleChange}
+                  placeholder="What is your Last Name"
+                  className="form-control"
+                  required
+                />
+              </div>
+              <div className="form-group">
+                <label htmlFor="displayName">Display Name</label>
+                <input
+                  type="text"
+                  name="displayName"
+                  id="displayName"
+                  onChange={this.handleChange}
+                  placeholder="Choose a display name"
+                  className="form-control"
+                  required
+                />
+              </div>
+              <div className="form-group">
+                <label htmlFor="email">Email Address</label>
+                <input
+                  type="email"
+                  name="email"
+                  id="email"
+                  onChange={this.handleChange}
+                  placeholder="Type your Email Address"
+                  className="form-control"
+                  required
+                />
+              </div>
+              <div className="form-group">
+                <label htmlFor="password">Password</label>
+                <input
+                  type="password"
+                  name="password"
+                  id="password"
+                  onChange={this.handleChange}
+                  placeholder="Type a Password"
+                  className="form-control"
+                  required
+                />
+              </div>
+              <input
+                type="submit"
+                value="Signup"
+                className="btn btn-primary btn-block btn-lg"
+              />
+            </form>
+            <div className="py-5 d-flex justify-content-between">
+              <Link to="/login" className="btn-link">
+                Login here
+              </Link>
+              <Link to="/" className="btn-link">
+                Go Home
+              </Link>
             </div>
           </div>
         </div>
-      );
-    }
+      </div>
+    );
   }
-);
+}
+export default Register;

@@ -1,21 +1,18 @@
 import React, { Component, lazy, Suspense } from "react";
-import { withAuth } from "@okta/okta-react";
 import { Link } from "react-router-dom";
 import Layout from "../layout/Layout";
 import axios from "axios";
-import { store } from '../../index'
 
 //actions//
 import { setPosts } from "../../actions";
 //REDUX
 import { connect } from "react-redux";
-import PostCard from  "../post"
+import PostCard from "../post";
 
 class Home extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      authenticated: null,
       posts: [],
       loading: true
     };
@@ -32,31 +29,11 @@ class Home extends Component {
       .catch(err => console.log({ err }));
   };
 
-  async checkAuthentication() {
-    const authenticated = await this.props.auth.isAuthenticated();
-    if (authenticated !== this.state.authenticated) {
-      this.setState({ authenticated });
-    }
-  }
-
   componentDidMount() {
-    this.checkAuthentication();
-    this.props.setPosts()
-    //console.log(this.props)
+    this.props.setPosts();
   }
-
-  login = async () => {
-    this.props.auth.login("/");
-  };
-
-  logout = async () => {
-    this.props.auth.logout("/");
-  };
 
   render() {
-    //console.log(store.getState())
-    if (this.state.authenticated === null) return null;
-
     return (
       <Layout>
         <div className="row mt-5">
@@ -114,12 +91,13 @@ class Home extends Component {
             <hr />
           </div>
 
-          {this.props.posts.length > 0
-            ? this.props.posts.map(post => (
+          {this.props.posts.length > 0 ? (
+            this.props.posts.map(post => (
               <PostCard key={post._id} posts={post} />
             ))
-              : <p className="h1 lead text-center mx-auto">Loading...</p>
-            }
+          ) : (
+            <p className="h1 lead text-center mx-auto">Loading...</p>
+          )}
         </div>
       </Layout>
     );
@@ -136,4 +114,4 @@ function mapStateToProps(state) {
 export default connect(
   mapStateToProps,
   { setPosts }
-)(withAuth(Home));
+)(Home);

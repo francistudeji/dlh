@@ -1,41 +1,50 @@
 import React from "react";
+import renderHTML from "react-render-html";
 import { distanceInWords } from "date-fns";
 
-const MessageList = props => {
-  //console.log(distanceInWords(new Date(2016, 0, 1), new Date(2015, 0, 1)));
+const d = "2019-02-27T20:37:49.307Z";
+const fmt = date => {
+  const dt = String(date);
+
+  const days = dt.split("T")[0];
+  const time = dt.split("T")[1];
+
+  const year = Number(days.split("-")[0]);
+  const month = Number(days.split("-")[1]);
+  const day = Number(days.split("-")[2]);
+
+  const hour = Number(time.split(":")[0]);
+  const minute = Number(time.split(":")[1]);
+  const second = Number(time.split(":")[2].split(".")[0]);
+
+  return { year, month, day, hour, minute, second };
+};
+
+console.log(fmt(d));
+
+const MessageList = ({ messages, currentUser }) => {
+  console.log(messages);
   return (
-    <div className="MessageList">
-      {props.messages.map((message, index) => {
-        return (
-          <div className="card card-body mb-2" key={index}>
-            <div className="user-name">
-              <div className="row">
-                <div className="col-8">
-                  <p>
-                    <strong>@{message.senderId}</strong> {" "}
-                    <small className="text-muted">{distanceInWords(message.updatedAt, new Date().toISOString())}</small>
-                  </p>
-                </div>
-                <div className="col-4">
-                  <p className="ml-auto float-right text-danger">3 comments</p>
-                </div>
-              </div>
+    <div className="message">
+      {messages.map(message => (
+        <div className="card mb-3" key={message.id}>
+          <div className="card-header d-flex justify-content-between">
+            <div className="header-left">
+              <strong>{`${currentUser.firstName} ${
+                currentUser.lastName
+              }`}</strong>{" "}
+              @{currentUser.displayName}
             </div>
-            <hr />
-            <div className="user-message" style={{ width: "100%" }}>
-              <p className="lead">{message.text}</p>
-              {message.attachment ? (
-                <img
-                  style={{ maxWidth: "100%" }}
-                  className="img-responsive"
-                  src={message.attachment.link}
-                  alt={message.attachment.type}
-                />
-              ) : null}
+            <div className="header-right">
+              <small>
+                {distanceInWords(message.timestamp, new Date().toDateString())}{" "}
+                ago
+              </small>
             </div>
           </div>
-        );
-      })}
+          <div className="card-body">{renderHTML(message.text)}</div>
+        </div>
+      ))}
     </div>
   );
 };

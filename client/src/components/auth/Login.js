@@ -1,48 +1,104 @@
-import React, { Component } from 'react';
-import { Redirect } from 'react-router-dom'
-import SigninWidget from './SignInWidget'
-import { withAuth } from '@okta/okta-react'
+import React, { Component } from "react";
+import { Redirect, Link } from "react-router-dom";
+import { firebase } from "../auth/firebase";
 
-export default withAuth(
-  class Login extends Component {
-
+class Login extends Component {
   constructor(props) {
-    super(props)
+    super(props);
     this.state = {
-      authenticated: null
-    }
-    this.checkAuthentication()
-  }
-
-  async checkAuthentication() {
-    const authenticated = await this.props.auth.isAuthenticated()
-    if(authenticated !== this.state.authenticated) {
-      this.setState({ authenticated })
-    }
+      email: "",
+      password: "",
+      error: null,
+      redirect: false,
+      currentUser: "",
+      isLoggedIn: false
+    };
   }
 
   componentDidMount() {
-    this.checkAuthentication()
+    firebase.auth().onAuthStateChanged(user => {
+      if (user !== null) {
+        this.setState({ redirect: true });
+      } else {
+        console.log("no user from login");
+      }
+    });
   }
 
-  onSuccess = res => {
-    return this.props.auth.redirect({
-      sessionToken: res.session.token
-    })
-  }
+  handleChange = e => {
+    this.setState({ [e.target.id]: e.target.value });
+  };
 
-  onError = err => {
-    console.log(`Error loggin in ${err}`)
-  }
+  handleSubmit = e => {
+    e.preventDefault();
+    firebase
+      .auth()
+      .signInWithEmailAndPassword(this.state.email, this.state.password)
+      .then(user => {
+        this.setState({ currentUser: user, error: null, redirect: true });
+      })
+      .catch(err => {
+        this.setState({ error: err.message }, () => {
+          setTimeout(() => this.setState({ error: null }), 4000);
+        });
+      });
+  };
 
   render() {
-    if(this.state.authenticated === null) return null;
+    // if (this.state.redirect) {
+    //   return <Redirect to="/forum" />;
+    // }
 
-    return this.state.authenticated ? <Redirect to={{ pathname: '/forum' }} />:
-    <SigninWidget
-      baseUrl={this.props.baseUrl}
-      onSuccess={this.onSuccess}
-      onError={this.onError}
-    />;
+    return (
+      <div className="login">
+        <div className="row w-100 pt-5">
+          <div className="col-xs-12 col-sm-8 col-md-6 col-lg-6 mx-auto pt-5">
+            <div className="card card-body py-4">
+              <h3 className="text-muted text-center">Login</h3>
+              {this.state.error !== null && (
+                <div className="alert alert-danger">{this.state.error}</div>
+              )}
+              <form className="login-form" onSubmit={this.handleSubmit}>
+                <div className="form-group">
+                  <label htmlFor="email">Email</label>
+                  <input
+                    type="email"
+                    required
+                    className="form-control"
+                    id="email"
+                    value={this.state.email}
+                    onChange={this.handleChange}
+                    placeholder="Email Address"
+                  />
+                </div>
+                <div className="form-group">
+                  <label htmlFor="password">Password</label>
+                  <input
+                    type="password"
+                    required
+                    className="form-control"
+                    id="password"
+                    value={this.state.password}
+                    onChange={this.handleChange}
+                    placeholder="Password"
+                  />
+                </div>
+
+                <input
+                  type="submit"
+                  value="Login"
+                  className="btn btn-danger btn-block"
+                />
+                <p className="py-3">
+                  Already have an account ? <Link to="/register">Register</Link>
+                </p>
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
   }
-})
+}
+
+export default Login;
