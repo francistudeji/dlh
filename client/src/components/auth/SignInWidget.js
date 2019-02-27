@@ -5,6 +5,7 @@ import "@okta/okta-signin-widget/dist/css/okta-sign-in.min.css";
 import "@okta/okta-signin-widget/dist/css/okta-theme.css";
 
 class SignInWidget extends Component {
+
   componentDidMount() {
     const el = ReactDOM.findDOMNode(this)
     this.widget = new OktaSignIn({
@@ -14,7 +15,7 @@ class SignInWidget extends Component {
     this.widget.renderEl({el}, this.props.onSuccess, this.props.onError)
   }
 
-  componentWillUnMount() {
+  componentWillUnmount() {
     this.widget.remove();
   }
 
