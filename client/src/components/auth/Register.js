@@ -1,11 +1,11 @@
-import React, { Component } from "react";
-import { Link } from "react-router-dom";
-import { firebase, db } from "../auth/firebase";
-import { Redirect } from "react-router-dom";
+import React, { Component } from "react"
+import { Link } from "react-router-dom"
+import { firebase, db } from "../auth/firebase"
+import { Redirect } from "react-router-dom"
 
 class Register extends Component {
   constructor(props) {
-    super(props);
+    super(props)
     this.state = {
       firstName: "",
       lastName: "",
@@ -16,16 +16,16 @@ class Register extends Component {
       currentUsername: "",
       currentScreen: "",
       to: null
-    };
+    }
   }
 
   handleChange = e => {
-    this.setState({ [e.target.name]: e.target.value });
-  };
+    this.setState({ [e.target.name]: e.target.value })
+  }
 
   handleSubmit = e => {
-    e.preventDefault();
-    const { firstName, lastName, displayName, email, password } = this.state;
+    e.preventDefault()
+    const { firstName, lastName, displayName, email, password } = this.state
     firebase
       .auth()
       .createUserWithEmailAndPassword(email, password)
@@ -38,29 +38,29 @@ class Register extends Component {
             email
           })
           .then(res => {
-            this.redirecToForum();
+            this.redirecToForum()
           })
           .catch(err => {
             this.setState({ error: err.message }, () => {
-              setTimeout(() => this.setState({ error: null }), 3000);
-            });
-            window.scrollTo(0, 0);
-          });
+              setTimeout(() => this.setState({ error: null }), 3000)
+            })
+            window.scrollTo(0, 0)
+          })
       })
       .catch(err => {
         this.setState({ error: err.message }, () => {
-          setTimeout(() => this.setState({ error: null }), 3000);
-        });
-        window.scrollTo(0, 0);
-      });
-  };
+          setTimeout(() => this.setState({ error: null }), 3000)
+        })
+        window.scrollTo(0, 0)
+      })
+  }
 
   redirecToForum = () => {
-    this.setState({ to: "/forum" });
-  };
+    this.setState({ to: "/forum" })
+  }
 
   render() {
-    if (this.state.to !== null) return <Redirect to={this.state.to} />;
+    if (this.state.to !== null) return <Redirect to={this.state.to} />
     return (
       <div className="row my-5">
         <div className="col-xs-12 col sm-10 col-md-6 col-lg-6 mx-auto">
@@ -133,7 +133,7 @@ class Register extends Component {
               <input
                 type="submit"
                 value="Signup"
-                className="btn btn-primary btn-block btn-lg"
+                className="btn btn-danger btn-block btn-lg"
               />
             </form>
             <div className="py-5 d-flex justify-content-between">
@@ -147,7 +147,7 @@ class Register extends Component {
           </div>
         </div>
       </div>
-    );
+    )
   }
 }
-export default Register;
+export default Register

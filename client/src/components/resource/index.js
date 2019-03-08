@@ -1,5 +1,4 @@
 import React from "react";
-import { Link } from "react-router-dom";
 
 export default function ResourceCard(props) {
   const { name, description, langfile } = props.resource;

@@ -1,6 +1,5 @@
 import React, { Component } from "react";
 import axios from "axios";
-import {isAdminAuthenticated} from '../lib/authenticate'
 import {Redirect} from 'react-router-dom'
 
 class AdminLogin extends Component {

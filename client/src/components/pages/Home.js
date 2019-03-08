@@ -1,21 +1,21 @@
-import React, { Component, lazy, Suspense } from "react";
-import { Link } from "react-router-dom";
-import Layout from "../layout/Layout";
-import axios from "axios";
+import React, { Component } from "react"
+import { Link } from "react-router-dom"
+import Layout from "../layout/Layout"
+import axios from "axios"
 
 //actions//
-import { setPosts } from "../../actions";
+import { setPosts } from "../../actions"
 //REDUX
-import { connect } from "react-redux";
-import PostCard from "../post";
+import { connect } from "react-redux"
+import PostCard from "../post"
 
 class Home extends Component {
   constructor(props) {
-    super(props);
+    super(props)
     this.state = {
       posts: [],
       loading: true
-    };
+    }
   }
 
   getPosts = () => {
@@ -24,13 +24,13 @@ class Home extends Component {
       method: "get"
     })
       .then(res => {
-        this.setState({ posts: [...this.state.posts, ...res.data.posts] });
+        this.setState({ posts: [...this.state.posts, ...res.data.posts] })
       })
-      .catch(err => console.log({ err }));
-  };
+      .catch(err => console.log({ err }))
+  }
 
   componentDidMount() {
-    this.props.setPosts();
+    this.props.setPosts()
   }
 
   render() {
@@ -67,10 +67,10 @@ class Home extends Component {
           <div className="col-xs-12 col-sm-12 col-md-12 col-lg-6 text-center">
             <div className="headline-image mt-5">
               <img
-                className="img-responsive mt-2"
-                src="/showcase.png"
+                className="img-responsive mt-2 mx-auto"
+                src="/showcase2.png"
                 alt="showcase"
-                style={{ width: "400px", maxWidth: "100%" }}
+                style={{ width: "400px", objectFit: "cover" }}
               />
             </div>
           </div>
@@ -81,7 +81,7 @@ class Home extends Component {
               <h1
                 className="my-5 pb-2 text-dark text-center"
                 style={{
-                  borderBottom: "4px solid #dc3545",
+                  borderBottom: "4px solid #7f3f01",
                   display: "inline-block"
                 }}
               >
@@ -100,7 +100,7 @@ class Home extends Component {
           )}
         </div>
       </Layout>
-    );
+    )
   }
 }
 
@@ -108,10 +108,10 @@ function mapStateToProps(state) {
   return {
     posts: state.posts,
     isLoading: state.isLoading
-  };
+  }
 }
 
 export default connect(
   mapStateToProps,
   { setPosts }
-)(Home);
+)(Home)
