@@ -8,7 +8,7 @@ const newChatKitUserRoute = require("./api/routes/ChatkitUser");
 const ChatKitAuthenticateRoute = require("./api/routes/ChatKitAuthenticate");
 const posts = require("./api/routes/Posts");
 const resources = require("./api/routes/Resources");
-const dictionaries = require("./api/routes/Dictionaries");
+const poetries = require("./api/routes/Poetries");
 const admin = require("./api/routes/Admin");
 
 const MONGODB_URI =
@@ -34,7 +34,7 @@ app.use("/api/chatkitAuthenticate", ChatKitAuthenticateRoute);
 app.use("/api/posts", posts);
 app.use("/api/admin", admin);
 app.use("/api/resources", resources);
-app.use("/api/dictionaries", dictionaries);
+app.use("/api/poetries", poetries);
 app.use(express.static("uploads"));
 
 // Server static assets if in production

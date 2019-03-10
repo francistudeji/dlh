@@ -28,8 +28,22 @@ class Navbar extends Component {
       <nav className="navbar navbar-expand-lg navbar-dark bg-danger mb-2">
         <div className="container">
           <Link className="navbar-brand" to="/">
-            <img src="/logo.jpg" alt="Logo" height="50" />
-            {/* <h4>Ibibio Language Hub</h4> */}
+            <img
+              src="/logo.jpg"
+              alt="Logo"
+              height="50"
+              style={{ display: "inline-block" }}
+            />
+            <h4
+              style={{
+                display: "inline-block",
+                marginTop: "16px",
+                marginLeft: "10px",
+                marginRight: "10px"
+              }}
+            >
+              Ibibio Language Hub
+            </h4>
           </Link>
           <button
             className="navbar-toggler"
@@ -61,7 +75,7 @@ class Navbar extends Component {
               </li>
               <li className="nav-item">
                 <Link className="nav-link" to="/ibibio-grammer">
-                  Grammer
+                  Grammar
                 </Link>
               </li>
               <li className="nav-item">

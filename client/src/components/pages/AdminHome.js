@@ -1,9 +1,9 @@
-import React, { Component } from "react";
-import { Link } from "react-router-dom";
-import axios from "axios";
-import ReactQuill from "react-quill";
-import "react-quill/dist/quill.snow.css";
-import { Redirect } from "react-router-dom";
+import React, { Component } from "react"
+import { Link } from "react-router-dom"
+import axios from "axios"
+import ReactQuill from "react-quill"
+import "react-quill/dist/quill.snow.css"
+import { Redirect } from "react-router-dom"
 
 const App = {
   modules: {
@@ -34,7 +34,7 @@ const App = {
     "video",
     "code-block"
   ]
-};
+}
 
 class AdminHome extends Component {
   state = {
@@ -54,79 +54,83 @@ class AdminHome extends Component {
     percentage: null,
     englishWord: "",
     ibibioWord: "",
-    dictionarymsg: null
-  };
+    dictionarymsg: null,
+    poetrymsg: null,
+    poetryTitle: "",
+    poetrySubtitle: "",
+    poetryFindings: ""
+  }
 
   componentDidMount() {
-    const admin = localStorage.getItem("admin");
+    const admin = localStorage.getItem("admin")
 
-    if (!admin || admin.token) {
-      this.setState({ redirect: true });
-    } else {
-      axios({
-        url: "/api/posts",
-        method: "get"
+    // if (!admin || admin.token) {
+    //   this.setState({ redirect: true });
+    // } else {
+    axios({
+      url: "/api/posts",
+      method: "get"
+    })
+      .then(res => {
+        //console.log(res.data);
+        this.setState({ posts: [...this.state.posts, ...res.data.posts] })
       })
-        .then(res => {
-          //console.log(res.data);
-          this.setState({ posts: [...this.state.posts, ...res.data.posts] });
-        })
-        .catch(err => console.log({ err }));
-    }
+      .catch(err => console.log({ err }))
+    //}
   }
 
   onInputChange = e => {
-    this.setState({ [e.target.id]: e.target.value });
-  };
+    this.setState({ [e.target.id]: e.target.value })
+  }
 
   handleInputChange = e => {
-    this.setState({ [e.target.name]: e.target.value });
-  };
+    this.setState({ [e.target.name]: e.target.value })
+  }
 
   handleFileInputChange = e => {
-    this.setState({ gfile: e.target.files[0] });
-  };
+    this.setState({ gfile: e.target.files[0] })
+  }
 
   onContentInputChange = e => {
     this.setState({
       content: e
-    });
-  };
+    })
+  }
 
   onSubmitFile = e => {
-    e.preventDefault();
-    const { gname, gdescription, gfile } = this.state;
-    const data = new FormData();
-    data.append("name", gname);
-    data.append("description", gdescription);
-    data.append("avatar", gfile);
+    e.preventDefault()
+    const { gname, gdescription, gfile } = this.state
+    const data = new FormData()
+    data.append("name", gname)
+    data.append("description", gdescription)
+    data.append("avatar", gfile)
 
     const config = {
       onUploadProgress: progressEvent => {
         let percentCompleted = Math.round(
           (progressEvent.loaded * 100) / progressEvent.total
-        );
-        this.setState({ percentage: percentCompleted });
+        )
+        this.setState({ percentage: percentCompleted })
       }
-    };
+    }
 
     axios
       .post("/api/resources", data, config)
       .then(res => {
-        this.setState({ filemsg: "Success uploading file" });
+        this.setState({ filemsg: "Success uploading file" })
       })
       .catch(err => {
-        this.setState({ filemsg: "Error uploading file" });
-      });
+        this.setState({ filemsg: "Error uploading file" })
+      })
     this.setState({
       gname: "",
       gdescription: "",
       gfile: ""
-    });
-  };
+    })
+  }
 
   onSubmitPost = e => {
-    e.preventDefault();
+    e.preventDefault()
     this.setState(
       {
         slug: this.state.title
@@ -136,10 +140,10 @@ class AdminHome extends Component {
           .join("-")
       },
       () => {
-        const { title, author, description, content, slug } = this.state;
+        const { title, author, description, content, slug } = this.state
 
         axios({
-          url: "api/posts",
+          url: "/api/posts",
           method: "post",
           data: {
             title,
@@ -150,55 +154,56 @@ class AdminHome extends Component {
           }
         })
           .then(res => {
-            this.setState({ postmsg: res.data.message });
+            this.setState({ postmsg: res.data.message })
           })
-          .catch(err => this.setState({ postmsg: "Error adding post" }));
+          .catch(err => this.setState({ postmsg: "Error adding post" }))
         this.setState({
           title: "",
           author: "",
           description: "",
           content: "",
           slug: ""
-        });
+        })
       }
-    );
-  };
+    )
+  }
 
-  onSubmitDictionary = e => {
-    const { ibibioWord, englishWord } = this.state;
+  onSubmitPoetry = e => {
+    e.preventDefault()
+    const { poetryTitle, poetrySubtitle, poetryFindings } = this.state
 
     axios({
-      url: "api/dictionaries",
+      url: "/api/poetries",
       method: "post",
       data: {
-        englishWord,
-        ibibioWord
+        poetryTitle, poetrySubtitle, poetryFindings
       }
     })
       .then(res => {
-        this.setState({ dictionarymsg: res.data.message });
+        this.setState({ poetrymsg: res.data.message })
       })
       .catch(err =>
-        this.setState({ dictionarymsg: "Error adding words to dictionary" })
-      );
+        this.setState({ poetrymsg: "Error following Request" })
+      )
     this.setState({
-      englishWord: "",
-      ibibioWord: ""
-    });
-  };
+      poetryTitle: "",
+      poetrySubtitle: "",
+      poetryFindings: ""
+    })
+  }
 
   logout = () => {
-    this.setState({ redirect: true }, () => localStorage.removeItem("admin"));
-  };
+    this.setState({ redirect: true }, () => localStorage.removeItem("admin"))
+  }
 
   toggleCreate = view => {
-    this.setState({ view });
-  };
+    this.setState({ view })
+  }
 
   render() {
-    const { redirect } = this.state;
+    const { redirect } = this.state
     if (redirect) {
-      return <Redirect to="/admin/login" />;
+      return <Redirect to="/admin/login" />
     }
     return (
       <div className="admin-home">
@@ -261,9 +266,9 @@ class AdminHome extends Component {
                 <li className="nav-item">
                   <button
                     className="nav-link text-light btn btn-danger"
-                    onClick={() => this.toggleCreate("dictionary")}
+                    onClick={() => this.toggleCreate("poetry")}
                   >
-                    Dictionary{" "}
+                    Poetry{" "}
                   </button>
                 </li>
                 <li className="nav-item">
@@ -457,46 +462,66 @@ class AdminHome extends Component {
               </div>
             ) : null}
 
-            {this.state.view === "dictionary" ? (
-              <div className="dictionary-create">
+            {this.state.view === "poetry" ? (
+              <div className="create" style={{ marginBottom: 100 }}>
                 <div className="row">
                   <div className="col-12">
-                    <h3 className="mt-3">Dictionary</h3>
+                    <h3 className="mt-3">Poetry</h3>
                     <div className="card card-body my-3">
-                      {this.state.dictionarymsg !== null ? (
+                      {this.state.poetrymsg !== null ? (
                         <div className="alert alert-success alert-dismissable">
-                          {this.state.dictionarymsg}
+                          {this.state.poetrymsg}
                         </div>
                       ) : null}
-                      <form onSubmit={this.onSubmitDictionary}>
+                      <form onSubmit={this.onSubmitPoetry}>
                         <div className="form-group">
-                          <label htmlFor="englishWord">Word in English</label>
+                          <label htmlFor="poetry-title">Title of Poetry</label>
                           <input
                             type="text"
-                            name="englishWord"
+                            id="poetry-title"
                             className="form-control"
-                            placeholder="Word in English"
+                            placeholder="Poetry Title"
                             required
-                            onChange={this.handleInputChange}
-                            value={this.state.englishWord}
+                            onChange={e => {
+                              this.setState({poetryTitle: e.target.value})
+                            }}
+                            value={this.state.poetryTitle}
                           />
                         </div>
                         <div className="form-group">
-                          <label htmlFor="ibibioWord">Word in Ibibio</label>
+                          <label htmlFor="poetry-subtitle">
+                            Subtitle of Poetry
+                          </label>
                           <input
                             type="text"
-                            name="ibibioWord"
+                            id="poetry-subtitle"
                             className="form-control"
-                            placeholder="Word in Ibibio"
+                            placeholder="Poetry Subtitle"
                             required
-                            onChange={this.handleInputChange}
-                            value={this.state.ibibioWord}
+                            onChange={e => {
+                              this.setState({ poetrySubtitle: e.target.value })
+                            }}
+                            value={this.state.poetrySubtitle}
                           />
                         </div>
-
+                        <div className="form-group">
+                          <label htmlFor="poetry-findings">Findings</label>
+                          <ReactQuill
+                            id="poetry-findings"
+                            value={this.state.poetryFindings}
+                            placeholder="Findings"
+                            onChange={e => {
+                              this.setState({ poetryFindings: e })
+                            }}
+                            formats={App.formats}
+                            modules={App.modules}
+                            style={{ height: 200 }}
+                          />
+                        </div>
+                        <br />
                         <input
                           type="submit"
-                          value="Submit"
+                          value="Publish Poetry"
                           className="btn btn-danger btn-block btn-lg mt-5 mb-3"
                         />
                       </form>
@@ -508,8 +533,8 @@ class AdminHome extends Component {
           </div>
         </main>
       </div>
-    );
+    )
   }
 }
 
-export default AdminHome;
+export default AdminHome
