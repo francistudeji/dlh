@@ -1,26 +1,26 @@
-import React, { Component } from "react";
-import { Link } from "react-router-dom";
-import { firebase } from "../auth/firebase";
+import React, { Component } from "react"
+import { Link } from "react-router-dom"
+import { firebase } from "../auth/firebase"
 
 class Navbar extends Component {
   state = {
     isLoggedIn: false
-  };
+  }
 
   componentDidMount() {
     let listener = firebase.auth().onAuthStateChanged(user => {
       if (user) {
         this.setState({
           isLoggedIn: true
-        });
-        listener();
+        })
+        listener()
       } else {
         this.setState({
           isLoggedIn: false
-        });
-        listener();
+        })
+        listener()
       }
-    });
+    })
   }
 
   render() {
@@ -28,7 +28,22 @@ class Navbar extends Component {
       <nav className="navbar navbar-expand-lg navbar-dark bg-danger mb-2">
         <div className="container">
           <Link className="navbar-brand" to="/">
-            <h4>Ibibio Language Hub</h4>
+            <img
+              src="/logo.jpg"
+              alt="Logo"
+              height="50"
+              style={{ display: "inline-block" }}
+            />
+            <h4
+              style={{
+                display: "inline-block",
+                marginTop: "16px",
+                marginLeft: "10px",
+                marginRight: "10px"
+              }}
+            >
+              Ibibio Language Hub
+            </h4>
           </Link>
           <button
             className="navbar-toggler"
@@ -44,6 +59,11 @@ class Navbar extends Component {
           <div className="collapse navbar-collapse" id="navbarNav">
             <ul className="navbar-nav">
               <li className="nav-item">
+                <Link className="nav-link" to="/">
+                  Home
+                </Link>
+              </li>
+              <li className="nav-item">
                 <Link className="nav-link" to="/translate">
                   Translator
                 </Link>
@@ -55,7 +75,7 @@ class Navbar extends Component {
               </li>
               <li className="nav-item">
                 <Link className="nav-link" to="/ibibio-grammer">
-                  Grammer
+                  Grammar
                 </Link>
               </li>
               <li className="nav-item">
@@ -74,10 +94,9 @@ class Navbar extends Component {
                   <button
                     className="btn btn-danger"
                     onClick={e => {
-                      firebase.auth().signOut();
-                      this.setState({ isLoggedIn: false });
+                      firebase.auth().signOut()
+                      this.setState({ isLoggedIn: false })
                     }}
-                    className="btn btn-danger"
                   >
                     Logout
                   </button>
@@ -96,7 +115,7 @@ class Navbar extends Component {
           </div>
         </div>
       </nav>
-    );
+    )
   }
 }
-export default Navbar;
+export default Navbar

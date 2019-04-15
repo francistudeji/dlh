@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 import Layout from "../layout/Layout";
 import MessageList from "../message/MessageList";
-import { firebase, db } from "../auth/firebase";
+import { firebase } from "../auth/firebase";
 import { Redirect } from "react-router-dom";
 import ReactQuill from "react-quill";
 import "react-quill/dist/quill.snow.css";
@@ -64,8 +64,8 @@ class Forum extends Component {
   getUserProfile = email => {
     let currentUser;
 
-    const messageDB = firebase.database().ref("users/");
-    messageDB.on("value", snapshot => {
+    const mess = firebase.database().ref("users/");
+    mess.on("value", snapshot => {
       snapshot.forEach(child => {
         if (email === child.val().email) {
           currentUser = { ...child.val() };
@@ -97,8 +97,8 @@ class Forum extends Component {
   };
 
   getMessages = () => {
-    const messageDB = firebase.database().ref("messages/");
-    messageDB.on("value", snapshot => {
+    const mess = firebase.database().ref("messages/");
+    mess.on("value", snapshot => {
       let newMessages = [];
       snapshot.forEach(child => {
         let message = child.val();
@@ -154,7 +154,6 @@ class Forum extends Component {
                     <ReactQuill
                       className="form-control"
                       value={this.state.text}
-                      placeholder="Type Post Content"
                       onChange={e => this.onChange(e)}
                       formats={App.formats}
                       modules={App.modules}

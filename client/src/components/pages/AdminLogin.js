@@ -1,6 +1,5 @@
 import React, { Component } from "react";
 import axios from "axios";
-import {isAdminAuthenticated} from '../lib/authenticate'
 import {Redirect} from 'react-router-dom'
 
 class AdminLogin extends Component {
@@ -41,7 +40,7 @@ class AdminLogin extends Component {
     } else {
       axios({
         method: "post",
-        url: "http://localhost:5000/api/admin/login",
+        url: "/api/admin/login",
         data: {
           email,
           password: passwordOne

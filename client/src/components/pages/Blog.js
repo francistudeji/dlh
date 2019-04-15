@@ -1,9 +1,6 @@
 import React, { Component } from "react";
-//actions
 import { getPost } from "../../actions";
-//REDUX
 import { connect } from "react-redux";
-import PostCard from "../post";
 import Layout from "../layout/Layout";
 import format from "date-fns/format";
 import axios from "axios";
@@ -22,11 +19,6 @@ class Blog extends Component {
   }
 
   componentDidMount() {
-
-    // this.listen = this.props.history.listen((loc, action) => {
-    //   console.log(loc, action);
-    // });
-    // this.props.setPosts();
     const slug = this.props.match.params.slug;
     const id = this.props.match.params.id;
 
