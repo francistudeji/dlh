@@ -7,7 +7,7 @@ import Forum from "./components/pages/Forum";
 import Translate from "./components/pages/Translate";
 import Login from "./components/auth/Login";
 import Register from "./components/auth/Register";
-// import Profile from "./components/auth/Profile";
+import Poetry from "./components/pages/Poetry";
 import AdminLogin from "./components/pages/AdminLogin";
 import AdminHome from "./components/pages/AdminHome";
 import Blog from "./components/pages/Blog";
@@ -31,6 +31,8 @@ class App extends Component {
             <Route exact path="/blog/:id/:slug" component={Blog} />
             <Route exact path="/maps" component={Maps} />
             <Route exact path="/ibibio-grammer" component={IbibioGrammer} />
+            <Route exact path="/poetry" component={Poetry} />
+
           </Switch>
         </React.Fragment>
       </Router>
